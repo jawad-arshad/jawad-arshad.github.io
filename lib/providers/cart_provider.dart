@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../models/base_model.dart';
@@ -30,7 +32,7 @@ class CartProvider with ChangeNotifier {
       totalPrice += foodItemModel.price;
       appliedCouponModel = CouponModel();
       couponValue = 0.0;
-      couponApplied = false;
+      // couponApplied = false;
       if (foodItemModel.freeFood.isNotEmpty) {
         items.add(CartCellModel(foodItemModel: _checkFreeItem(foodItemModel)));
       }
@@ -50,14 +52,25 @@ class CartProvider with ChangeNotifier {
       return;
     } else {
       items.remove(item);
-      totalPrice -= item.foodItemModel.price;
+
       double couponDiscount = 0.0;
-      if (totalPrice >= 500 && appliedCouponModel.level == 1) {
-        couponDiscount = calculateDiscountedPrice(totalPrice, 10);
-      } else if (totalPrice >= 1000 && appliedCouponModel.level == 2) {
-        couponDiscount = calculateDiscountedPrice(totalPrice, 20);
+      if (appliedCouponModel.level == 1) {
+        if (appliedCouponModel.couponApply) {
+          couponDiscount = totalPrice * 0.1;
+          appliedCouponModel = CouponModel();
+        }
+        // couponDiscount = calculateDiscountedPrice(totalPrice, 10);
+      } else if (appliedCouponModel.level == 2) {
+        // couponDiscount = calculateDiscountedPrice(totalPrice, 20);
+        if (appliedCouponModel.couponApply) {
+          couponDiscount = totalPrice * 0.2;
+          appliedCouponModel = CouponModel();
+        }
       }
-      totalPrice -= couponDiscount;
+      print("coupon price............$couponDiscount");
+      
+      totalPrice -= item.foodItemModel.price;
+      totalPrice = totalPrice + couponDiscount;
 
       if (items.isEmpty) {
         totalPrice = 0;
@@ -68,26 +81,29 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  bool couponApplied = false;
+  // bool couponApplied = false;
   double couponValue = 0.0;
 
   double applyCoupon(CouponModel couponModel) {
     appliedCouponModel = couponModel;
-    if (totalPrice >= 500 && couponModel.level == 1) {
+    if (totalPrice >= 500 && appliedCouponModel.level == 1) {
       couponValue = 0.0;
+      appliedCouponModel.couponApply = true;
       couponValue = totalPrice -= totalPrice * 0.1;
-      couponApplied = true;
+      // couponApplied = true;
       notifyListeners();
       return couponValue;
-    } else if (totalPrice >= 1000 && couponModel.level == 2) {
+    } else if (totalPrice >= 1000 && appliedCouponModel.level == 2) {
       couponValue = 0.0;
       couponValue = totalPrice -= totalPrice * 0.2;
-      couponApplied = true;
+      appliedCouponModel.couponApply = true;
+      // couponApplied = true;
       notifyListeners();
       return couponValue;
     } else {
       couponValue = 0.0;
-      couponApplied = false;
+      couponModel.couponApply = true;
+      // couponApplied = false;
       notifyListeners();
       return 0.0;
     }

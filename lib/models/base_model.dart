@@ -15,6 +15,7 @@ class CartCellModel {
 class CouponModel {
   int level = 0;
   double discount = 0.0;
+  bool couponApply = false;
 
-  CouponModel({this.level = 0, this.discount = 0.0});
+  CouponModel({this.level = 0, this.discount = 0.0,this.couponApply = false,});
 }

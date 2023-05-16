@@ -133,14 +133,11 @@ class CouponButton extends StatelessWidget {
         ),
         const SizedBox(height: 5.0),
         ElevatedButton(
-          onPressed: cartProvider.couponApplied
-              ? () {
-              }
-              : cartProvider.totalPrice >= 1000
+          onPressed: cartProvider.totalPrice >= 1000 && !cartProvider.appliedCouponModel.couponApply
                   ? () {
                       cartProvider.applyCoupon(CouponModel(level: 2, discount: 20));
                     }
-                  : cartProvider.totalPrice >= 500
+                  : cartProvider.totalPrice >= 500 && !cartProvider.appliedCouponModel.couponApply
                       ? () {
                           cartProvider.applyCoupon(CouponModel(level: 1, discount: 10));
                         }
